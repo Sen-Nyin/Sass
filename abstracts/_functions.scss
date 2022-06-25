@@ -1,0 +1,18 @@
+@use 'variables';
+@use 'utilities';
+
+// //////////////////////////////
+// RETURN VARIABLE
+// //////////////////////////////
+
+@function v($var) {
+    @return var(--#{$var});
+}
+
+// //////////////////////////////
+// CALCULATE FLOAT GRID WIDTHS
+// //////////////////////////////
+
+@function fcol($colspan, $maxcol) {
+    @return calc(#{$colspan} * (100% - ((#{$maxcol} - 1) * #{$gutter-h})) / #{$maxcol} + ((#{$colspan} - 1) * #{$gutter-h}));
+}

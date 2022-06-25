@@ -1,0 +1,130 @@
+@use 'variables';
+@use 'utilities';
+@use 'functions';
+
+// //////////////////////////////
+// CREATE FLEXBOX
+// //////////////////////////////
+
+@mixin flex($flow, $justify, $align) {
+    display: flex;
+
+    @if ($flow==0) {
+        flex-flow: row nowrap;
+    }
+
+    @else {
+        flex-direction: $flow;
+    }
+
+    @if ($justify==0) {
+        justify-content: center;
+    }
+
+    @else {
+        justify-content: $justify;
+    }
+
+    @if ($align==0) {
+        align-items: center;
+    }
+
+    @else {
+        align-items: $align;
+    }
+}
+
+// //////////////////////////////
+// CENTRE WITH GRID
+// //////////////////////////////
+
+@mixin center() {
+    display: grid;
+    place-items: center;
+}
+
+// //////////////////////////////
+// CENTRE ABSOLUTES
+// //////////////////////////////
+
+@mixin ab-center() {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+@mixin absCentre {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+// //////////////////////////////
+// PADDING
+// //////////////////////////////
+
+@mixin px($rem-units) {
+    padding-left: #{$rem-units}rem;
+    padding-right: #{$rem-units}rem;
+}
+
+@mixin py($rem-units) {
+    padding-top: #{$rem-units}rem;
+    padding-bottom: #{$rem-units}rem;
+}
+
+// //////////////////////////////
+// TRIANGLE?
+// //////////////////////////////
+
+@mixin css-triangle($color, $direction, $size: 6px, $position: absolute, $round: false) {
+    @include pseudo($pos: $position);
+    width: 0;
+    height: 0;
+
+    @if $round {
+        border-radius: 3px;
+    }
+
+    @if $direction==down {
+        border-left: $size solid transparent;
+        border-right: $size solid transparent;
+        border-top: $size solid $color;
+        margin-top: 0 - round($size / 2.5);
+    }
+
+    @else if $direction==up {
+        border-left: $size solid transparent;
+        border-right: $size solid transparent;
+        border-bottom: $size solid $color;
+        margin-bottom: 0 - round($size / 2.5);
+    }
+
+    @else if $direction==right {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+        border-left: $size solid $color;
+        margin-right: -$size;
+    }
+
+    @else if $direction==left {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+        border-right: $size solid $color;
+        margin-left: -$size;
+    }
+}
+
+// //////////////////////////////
+// CLEARFIX
+// //////////////////////////////
+
+@mixin clearfix {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}

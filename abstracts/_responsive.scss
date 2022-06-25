@@ -1,0 +1,129 @@
+@use 'variables';
+@use 'utilities';
+@use 'functions';
+
+@use "sass:math";
+
+// //////////////////////////////
+// SET BASE BREAKPOINT VALUES
+// //////////////////////////////
+
+$xs: 375;
+$sm: 480;
+$md: 768;
+$lg: 1024;
+$xl: 1200;
+$xxl: 1201;
+
+// //////////////////////////////
+// FUNCTION TO CONVERT PX TO EM
+// //////////////////////////////
+
+@function calcEM($vppx, ) {
+    $em: math.div($vppx, 16);
+    @return $em * 1em;
+}
+
+// //////////////////////////////
+// SET BREAKPOINT MAP
+// //////////////////////////////
+
+$breakpoints: (xs: (min: calcEM($xs),
+        max: calcEM($xs - 0.2),
+        range: calcEM($sm - 0.2),
+    ),
+    sm: (min: calcEM($sm),
+        max: calcEM($sm - 0.2),
+        range: calcEM($md - 0.2),
+    ),
+    md: (min: calcEM($md),
+        max: calcEM($md - 0.2),
+        range: calcEM($lg - 0.2),
+    ),
+    lg: (min: calcEM($lg),
+        max: calcEM($lg - 0.2),
+        range: calcEM($xl - 0.2),
+    ),
+    xl: (min: calcEM($xl),
+        max: calcEM($xl - 0.2),
+        range: calcEM($xxl - 0.2),
+    ),
+    xxl: (min: calcEM($xxl),
+        max: calcEM($xxl - 0.2),
+    ));
+
+// //////////////////////////////
+// CREATE QUERY WITH MIXIN
+// //////////////////////////////
+
+@mixin breakpoint($breakpoint, $type: min) {
+
+    // CHECK MAP FOR BREAKPOINT
+    @if map-has-key($breakpoints, $breakpoint) {
+        $breakpoint-val: map-get($breakpoints, $breakpoint);
+        $breakpoint-min: map-get($breakpoint-val, min);
+        $breakpoint-max: map-get($breakpoint-val, max);
+        $breakpoint-range: map-get($breakpoint-val, range);
+
+        // CHECK BREAKPOINT TYPE
+
+        @if $type==min {
+            @media only screen and (min-width: $breakpoint-min) {
+                @content;
+            }
+        }
+
+        @else if $type==max {
+            @media only screen and (max-width: $breakpoint-max) {
+                @content;
+            }
+        }
+
+        @else {
+            @if $breakpoint==xxl {
+                @media only screen and (min-width: $breakpoint-min) {
+                    @content;
+                }
+            }
+
+            @else {
+                @media only screen and (min-width: $breakpoint-min) and (max-width: $breakpoint-range) {
+                    @content;
+                }
+            }
+        }
+    }
+
+    // IF NO MAP, THEN USE CUSTOM - MIN OR MAX ONLY, NOT BOTH
+
+    @else {
+        @if $type==min {
+            @media only screen and (min-width: calcEM($breakpoint)) {
+                @content;
+            }
+        }
+
+        @else {
+            @media only screen and (max-width: calcEM($breakpoint)) {
+                @content;
+            }
+        }
+    }
+}
+
+// //////////////////////////////
+// RESPONSIVE CLAMP
+// //////////////////////////////
+
+@mixin getclamp($property, $minsize, $maxsize, $minwidth, $maxwidth) {
+
+    // convert vp widths to rem
+    $minw: math.div($minwidth, 10);
+    $maxw: math.div($maxwidth, 10);
+
+    // calculatae slope
+    $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
+    $yint: (0 - $minw) * $slope + $minsize;
+
+    #{$property}: clamp($minsize * 1rem, ($yint * 1rem) + calc($slope * 100vw), $maxsize * 1rem);
+}
