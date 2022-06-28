@@ -1,7 +1,9 @@
 
 // ///////////////////////////////////////////////////////
+//
 // CSS Reset by elad v 1.7.2 with edits by Leon Lonsdale
 // https://github.com/elad2412/the-new-css-reset
+//
 // ///////////////////////////////////////////////////////
     
 // Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property
@@ -66,7 +68,7 @@ meter {
 }
 
 // fix the feature of 'hidden' attribute.
-   display:revert; revert to element instead of attribute
+//   display:revert; revert to element instead of attribute
 :where([hidden]) {
     display: none;
 }
