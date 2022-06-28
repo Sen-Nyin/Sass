@@ -1,1 +1,25 @@
 @use '../abstracts/' as a;
+
+:root {
+
+    // Default font size to 10px
+
+    font-size: 62.5%;
+
+    // COLORS
+
+    --color-primary: $color-primary;
+    --color-secondary: $color-secondary;
+    --color-tertiary: $color-tertiary;
+
+    // TYPOGRAPHY
+
+    --font-default: $font-default;
+    --font-secondary: $font-secondary;
+
+}
+
+body {
+    font-family: var(--font-default);
+    font-size: var(--font-paragraph-default);
+}

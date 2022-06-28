@@ -1,0 +1,75 @@
+@use 'responsive' as r;
+
+// /////////////////////////
+// COLORS
+// /////////////////////////
+
+// PRIMARY
+
+// $color-primary: ;
+
+// $color-primary-dark-10: darken($color-primary, 10%);
+// $color-primary-dark-20: darken($color-primary, 20%);
+// $color-primary-dark-30: darken($color-primary, 30%);
+// $color-primary-dark-40: darken($color-primary, 40%);
+// $color-primary-dark-50: darken($color-primary, 50%);
+// $color-primary-dark-60: darken($color-primary, 60%);
+// $color-primary-dark-70: darken($color-primary, 70%);
+// $color-primary-dark-80: darken($color-primary, 80%);
+// $color-primary-dark-90: darken($color-primary, 90%);
+
+// $color-primary-light-10: lighten($color-primary, 10%);
+// $color-primary-light-20: lighten($color-primary, 20%);
+// $color-primary-light-30: lighten($color-primary, 30%);
+// $color-primary-light-40: lighten($color-primary, 40%);
+// $color-primary-light-50: lighten($color-primary, 50%);
+// $color-primary-light-60: lighten($color-primary, 60%);
+// $color-primary-light-70: lighten($color-primary, 70%);
+// $color-primary-light-80: lighten($color-primary, 80%);
+// $color-primary-light-90: lighten($color-primary, 90%);
+
+// SECONDARY
+
+// $color-secondary:;
+
+// $color-secondary-dark-10: darken($color-secondary, 10%);
+// $color-secondary-dark-20: darken($color-secondary, 20%);
+// $color-secondary-dark-30: darken($color-secondary, 30%);
+// $color-secondary-dark-40: darken($color-secondary, 40%);
+// $color-secondary-dark-50: darken($color-secondary, 50%);
+// $color-secondary-dark-60: darken($color-secondary, 60%);
+// $color-secondary-dark-70: darken($color-secondary, 70%);
+// $color-secondary-dark-80: darken($color-secondary, 80%);
+// $color-secondary-dark-90: darken($color-secondary, 90%);
+
+// $color-secondary-light-10: lighten($color-secondary, 10%);
+// $color-secondary-light-20: lighten($color-secondary, 20%);
+// $color-secondary-light-30: lighten($color-secondary, 30%);
+// $color-secondary-light-40: lighten($color-secondary, 40%);
+// $color-secondary-light-50: lighten($color-secondary, 50%);
+// $color-secondary-light-60: lighten($color-secondary, 60%);
+// $color-secondary-light-70: lighten($color-secondary, 70%);
+// $color-secondary-light-80: lighten($color-secondary, 80%);
+// $color-secondary-light-90: lighten($color-secondary, 90%);
+
+// /////////////////////////
+// GREYS
+// /////////////////////////
+
+
+
+// /////////////////////////
+// SHADOWS
+// /////////////////////////
+
+
+
+// /////////////////////////
+// FONTS
+// /////////////////////////
+
+// $font-default: ;
+// $font-secondary: ;
+
+// $font-size-default: insertClamp(0,0,xs,xxl);
+
