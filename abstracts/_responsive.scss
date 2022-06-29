@@ -2,8 +2,6 @@
 @use 'utilities';
 @use 'functions';
 
-@use "sass:math";
-
 // //////////////////////////////
 // SET BASE BREAKPOINT VALUES
 // //////////////////////////////
@@ -16,44 +14,59 @@ $xl: 1200;
 $xxl: 1201;
 
 // //////////////////////////////
-// FUNCTION TO CONVERT PX TO EM
+// CONVERT PX TO REM/EM
+// Assumes font size reset to 62.5%
 // //////////////////////////////
 
-@function calcEM($vppx, ) {
-    $em: math.div($vppx, 16);
-    @return $em * 1em;
+@function convertPX($px, $type) {
+
+    @if $type==em {
+        $em: $px / 16;
+        @return #{$em} * 1em;
+    }
+
+    @else if $type==rem {
+        $rem: $px / 10;
+        @return #{$rem} * 1rem;
+    }
 }
 
 // //////////////////////////////
 // SET BREAKPOINT MAP
 // //////////////////////////////
 
-$breakpoints: (xs: (min: calcEM($xs),
-        max: calcEM($xs - 0.2),
-        range: calcEM($sm - 0.2),
+$breakpoints: (xs: (min: convertPX($xs, em),
+        max: convertPX($xs - 0.2, em),
+        range: convertPX($sm - 0.2, em),
+        rem: convertPX($xs, rem),
     ),
-    sm: (min: calcEM($sm),
-        max: calcEM($sm - 0.2),
-        range: calcEM($md - 0.2),
+    sm: (min: convertPX($sm, em),
+        max: convertPX($sm - 0.2, em),
+        range: convertPX($md - 0.2, em),
+        rem: convertPX($sm, rem),
     ),
-    md: (min: calcEM($md),
-        max: calcEM($md - 0.2),
-        range: calcEM($lg - 0.2),
+    md: (min: convertPX($md, em),
+        max: convertPX($md - 0.2, em),
+        range: convertPX($lg - 0.2, em),
+        rem: convertPX($md, rem),
     ),
-    lg: (min: calcEM($lg),
-        max: calcEM($lg - 0.2),
-        range: calcEM($xl - 0.2),
+    lg: (min: convertPX($lg, em),
+        max: convertPX($lg - 0.2, em),
+        range: convertPX($xl - 0.2, em),
+        rem: convertPX($lg, rem),
     ),
-    xl: (min: calcEM($xl),
-        max: calcEM($xl - 0.2),
-        range: calcEM($xxl - 0.2),
+    xl: (min: convertPX($xl, em),
+        max: convertPX($xl - 0.2, em),
+        range: convertPX($xxl - 0.2, em),
+        rem: convertPX($xl, rem),
     ),
-    xxl: (min: calcEM($xxl),
-        max: calcEM($xxl - 0.2),
+    xxl: (min: convertPX($xxl),
+        max: convertPX($xxl - 0.2, em),
+        rem: convertPX($xxl, rem),
     ));
 
 // //////////////////////////////
-// CREATE QUERY WITH MIXIN
+// 
 // //////////////////////////////
 
 @mixin breakpoint($breakpoint, $type: min) {
@@ -98,13 +111,13 @@ $breakpoints: (xs: (min: calcEM($xs),
 
     @else {
         @if $type==min {
-            @media only screen and (min-width: calcEM($breakpoint)) {
+            @media only screen and (min-width: convertPX($breakpoint, em)) {
                 @content;
             }
         }
 
         @else {
-            @media only screen and (max-width: calcEM($breakpoint)) {
+            @media only screen and (max-width: convertPX($breakpoint, em)) {
                 @content;
             }
         }
@@ -112,18 +125,74 @@ $breakpoints: (xs: (min: calcEM($xs),
 }
 
 // //////////////////////////////
-// RESPONSIVE CLAMP
+// RESPONSIVE CLAMPS
 // //////////////////////////////
 
 @mixin getclamp($property, $minsize, $maxsize, $minwidth, $maxwidth) {
 
-    // convert vp widths to rem
-    $minw: math.div($minwidth, 10);
-    $maxw: math.div($maxwidth, 10);
+    // If minwidth argument is within map, get rem value
+    @if map-has-key($breakpoints, $minwidth) {
+        $minw-val: map-get($breakpoints, $minwidth);
+        $minw: map-get($minw-val, rem);
+    }
+
+    // otherwise calculate rem value for custom argument
+    @else {
+        $minw: convertPX($minwidth, rem);
+    }
+
+    // If maxwidth argument is within map, get rem value
+    @if map-has-key($breakpoints, $maxwidth) {
+        $maxw-val: map-get($breakpoints, $maxwidth);
+        $maxw: map-get($maxw-val, rem);
+    }
+
+    // otherwise calculate rem value for custom argument
+    @else {
+        $maxw: convertPX($maxwidth, rem);
+    }
 
     // calculatae slope
-    $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
-    $yint: (0 - $minw) * $slope + $minsize;
+    $slope: ($maxsize - $minsize) / ($maxw - $minw);
+    // calculate Y intersect
+    $yint: (0 - $minw) * $slope+$minsize;
 
-    #{$property}: clamp($minsize * 1rem, ($yint * 1rem) + calc($slope * 100vw), $maxsize * 1rem);
+    // output clamp values
+    #{$property}: clamp($minsize * 1rem,
+        ($yint * 1rem) + ($slope * 100vw),
+        $maxsize * 1rem);
+}
+
+@function insertClamp($minsize, $maxsize, $minwidth, $maxwidth) {
+
+    // If minwidth argument is within map, get rem value
+    @if map-has-key($breakpoints, $minwidth) {
+        $minw-val: map-get($breakpoints, $minwidth);
+        $minw: map-get($minw-val, rem);
+    }
+
+    // otherwise calculate rem value for custom argument
+    @else {
+        $minw: convertPX($minwidth, rem);
+    }
+
+    // If maxwidth argument is within map, get rem value
+    @if map-has-key($breakpoints, $maxwidth) {
+        $maxw-val: map-get($breakpoints, $maxwidth);
+        $maxw: map-get($maxw-val, rem);
+    }
+
+    // otherwise calculate rem value for custom argument
+    @else {
+        $maxw: convertPX($maxwidth, rem);
+    }
+
+    // calculatae slope
+    $slope: ($maxsize - $minsize) / ($maxw - $minw);
+    // calculate Y intersect
+    $yint: (0 - $minw) * $slope+$minsize;
+
+    @return clamp(#{$minsize} * 1rem,
+        (#{$yint} * 1rem) + (#{$slope} * 100vw),
+        #{$maxsize} * 1rem);
 }
