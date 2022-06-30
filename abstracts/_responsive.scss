@@ -27,13 +27,13 @@ $xxl: 1201;
 @function convertPX($px, $type) {
 
     @if $type==em {
-        $em: math.div($px, 16);
-        @return $em * 1em;
+        $toem: math.div($px, 16);
+        @return $toem * 1em;
     }
 
     @else if $type==rem {
-        $rem: math.div($px, 10);
-        @return $rem * 1rem;
+        $torem: math.div($px, 10);
+        @return $torem;
     }
 }
 
@@ -41,65 +41,65 @@ $xxl: 1201;
 // SET BREAKPOINT MAP
 // //////////////////////////////
 
-$breakpoints: (xs: (min: convertPX($xs, em),
-        max: convertPX($xs - 0.2, em),
-        range: convertPX($sm - 0.2, em),
-        rem: convertPX($xs, rem),
+$breakpoints: ("xs": ("min": convertPX($xs, em),
+        "max": convertPX($xs - 0.2, em),
+        "range": convertPX($sm - 0.2, em),
+        "rem": convertPX($xs, rem),
     ),
-    sm: (min: convertPX($sm, em),
-        max: convertPX($sm - 0.2, em),
-        range: convertPX($md - 0.2, em),
-        rem: convertPX($sm, rem),
+    "sm": ("min": convertPX($sm, em),
+        "max": convertPX($sm - 0.2, em),
+        "range": convertPX($md - 0.2, em),
+        "rem": convertPX($sm, rem),
     ),
-    md: (min: convertPX($md, em),
-        max: convertPX($md - 0.2, em),
-        range: convertPX($lg - 0.2, em),
-        rem: convertPX($md, rem),
+    "md": ("min": convertPX($md, em),
+        "max": convertPX($md - 0.2, em),
+        "range": convertPX($lg - 0.2, em),
+        "rem": convertPX($md, rem),
     ),
-    lg: (min: convertPX($lg, em),
-        max: convertPX($lg - 0.2, em),
-        range: convertPX($xl - 0.2, em),
-        rem: convertPX($lg, rem),
+    "lg": ("min": convertPX($lg, em),
+        "max": convertPX($lg - 0.2, em),
+        "range": convertPX($xl - 0.2, em),
+        "rem": convertPX($lg, rem),
     ),
-    xl: (min: convertPX($xl, em),
-        max: convertPX($xl - 0.2, em),
-        range: convertPX($xxl - 0.2, em),
-        rem: convertPX($xl, rem),
+    "xl": ("min": convertPX($xl, em),
+        "max": convertPX($xl - 0.2, em),
+        'range': convertPX($xxl - 0.2, em),
+        "rem": convertPX($xl, rem),
     ),
-    xxl: (min: convertPX($xxl, em),
-        max: convertPX($xxl - 0.2, em),
-        rem: convertPX($xxl, rem),
+    "xxl": ('min': convertPX($xxl, em),
+        "max": convertPX($xxl - 0.2, em),
+        'rem': convertPX($xxl, rem),
     ));
 
 // //////////////////////////////
 // 
 // //////////////////////////////
 
-@mixin breakpoint($breakpoint, $type: min) {
+@mixin breakpoint($breakpoint, $type: "min") {
 
     // CHECK MAP FOR BREAKPOINT
     @if map-has-key($breakpoints, $breakpoint) {
         $breakpoint-val: map-get($breakpoints, $breakpoint);
-        $breakpoint-min: map-get($breakpoint-val, min);
-        $breakpoint-max: map-get($breakpoint-val, max);
-        $breakpoint-range: map-get($breakpoint-val, range);
+        $breakpoint-min: map-get($breakpoint-val, "min");
+        $breakpoint-max: map-get($breakpoint-val, "max");
+        $breakpoint-range: map-get($breakpoint-val, "range");
 
         // CHECK BREAKPOINT TYPE
 
-        @if $type==min {
+        @if $type=="min" {
             @media only screen and (min-width: $breakpoint-min) {
                 @content;
             }
         }
 
-        @else if $type==max {
+        @else if $type=="max" {
             @media only screen and (max-width: $breakpoint-max) {
                 @content;
             }
         }
 
         @else {
-            @if $breakpoint==xxl {
+            @if $breakpoint=="xxl" {
                 @media only screen and (min-width: $breakpoint-min) {
                     @content;
                 }
@@ -116,7 +116,7 @@ $breakpoints: (xs: (min: convertPX($xs, em),
     // IF NO MAP, THEN USE CUSTOM - MIN OR MAX ONLY, NOT BOTH
 
     @else {
-        @if $type==min {
+        @if $type=="min" {
             @media only screen and (min-width: convertPX($breakpoint, em)) {
                 @content;
             }
@@ -158,8 +158,8 @@ $breakpoints: (xs: (min: convertPX($xs, em),
     //     $maxw: convertPX($maxwidth, rem);
     // }
 
-    $minw: math.div($minwidth, 10);
-    $maxw: math.div($maxwidth, 10);
+    // $minw: math.div($minwidth, 10);
+    // $maxw: math.div($maxwidth, 10);
 
     // calculatae slope
     $slope: ($maxsize - $minsize) / ($maxw - $minw);
@@ -172,7 +172,7 @@ $breakpoints: (xs: (min: convertPX($xs, em),
             $maxsize * 1rem);
 }
 
-@function insertClamp($minsize, $maxsize, $minwidth, $maxwidth) {
+@function clamped($minsize, $maxsize, $minwidth, $maxwidth) {
 
     // If minwidth argument is within map, get rem value
     // @if map-has-key($breakpoints, $minwidth) {
