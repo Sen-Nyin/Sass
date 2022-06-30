@@ -5,10 +5,8 @@
 // @LeonLonsdale
 // /////////////////////////////////// 
 
+@use 'sass:math';
 
-@use 'variables';
-@use 'utilities';
-@use 'functions';
 
 // //////////////////////////////
 // SET BASE BREAKPOINT VALUES
@@ -29,13 +27,13 @@ $xxl: 1201;
 @function convertPX($px, $type) {
 
     @if $type==em {
-        $em: $px / 16;
-        @return #{$em} * 1em;
+        $em: math.div($px, 16);
+        @return $em * 1em;
     }
 
     @else if $type==rem {
-        $rem: $px / 10;
-        @return #{$rem} * 1rem;
+        $rem: math.div($px, 10);
+        @return $rem * 1rem;
     }
 }
 
@@ -68,7 +66,7 @@ $breakpoints: (xs: (min: convertPX($xs, em),
         range: convertPX($xxl - 0.2, em),
         rem: convertPX($xl, rem),
     ),
-    xxl: (min: convertPX($xxl),
+    xxl: (min: convertPX($xxl, em),
         max: convertPX($xxl - 0.2, em),
         rem: convertPX($xxl, rem),
     ));
@@ -138,27 +136,30 @@ $breakpoints: (xs: (min: convertPX($xs, em),
 
 @mixin getclamp($property, $minsize, $maxsize, $minwidth, $maxwidth) {
 
-    // If minwidth argument is within map, get rem value
-    @if map-has-key($breakpoints, $minwidth) {
-        $minw-val: map-get($breakpoints, $minwidth);
-        $minw: map-get($minw-val, rem);
-    }
+    // // If minwidth argument is within map, get rem value
+    // @if map-has-key($breakpoints, $minwidth) {
+    //     $minw-val: map-get($breakpoints, $minwidth);
+    //     $minw: map-get($minw-val, rem);
+    // }
 
-    // otherwise calculate rem value for custom argument
-    @else {
-        $minw: convertPX($minwidth, rem);
-    }
+    // // otherwise calculate rem value for custom argument
+    // @else {
+    //     $minw: convertPX($minwidth, rem);
+    // }
 
-    // If maxwidth argument is within map, get rem value
-    @if map-has-key($breakpoints, $maxwidth) {
-        $maxw-val: map-get($breakpoints, $maxwidth);
-        $maxw: map-get($maxw-val, rem);
-    }
+    // // If maxwidth argument is within map, get rem value
+    // @if map-has-key($breakpoints, $maxwidth) {
+    //     $maxw-val: map-get($breakpoints, $maxwidth);
+    //     $maxw: map-get($maxw-val, rem);
+    // }
 
-    // otherwise calculate rem value for custom argument
-    @else {
-        $maxw: convertPX($maxwidth, rem);
-    }
+    // // otherwise calculate rem value for custom argument
+    // @else {
+    //     $maxw: convertPX($maxwidth, rem);
+    // }
+
+    $minw: math.div($minwidth, 10);
+    $maxw: math.div($maxwidth, 10);
 
     // calculatae slope
     $slope: ($maxsize - $minsize) / ($maxw - $minw);
@@ -167,33 +168,36 @@ $breakpoints: (xs: (min: convertPX($xs, em),
 
     // output clamp values
     #{$property}: clamp($minsize * 1rem,
-        ($yint * 1rem) + ($slope * 100vw),
-        $maxsize * 1rem);
+            ($yint * 1rem) + ($slope * 100vw),
+            $maxsize * 1rem);
 }
 
 @function insertClamp($minsize, $maxsize, $minwidth, $maxwidth) {
 
     // If minwidth argument is within map, get rem value
-    @if map-has-key($breakpoints, $minwidth) {
-        $minw-val: map-get($breakpoints, $minwidth);
-        $minw: map-get($minw-val, rem);
-    }
+    // @if map-has-key($breakpoints, $minwidth) {
+    //     $minw-val: map-get($breakpoints, $minwidth);
+    //     $minw: map-get($minw-val, rem);
+    // }
 
-    // otherwise calculate rem value for custom argument
-    @else {
-        $minw: convertPX($minwidth, rem);
-    }
+    // // otherwise calculate rem value for custom argument
+    // @else {
+    //     $minw: convertPX($minwidth, rem);
+    // }
 
-    // If maxwidth argument is within map, get rem value
-    @if map-has-key($breakpoints, $maxwidth) {
-        $maxw-val: map-get($breakpoints, $maxwidth);
-        $maxw: map-get($maxw-val, rem);
-    }
+    // // If maxwidth argument is within map, get rem value
+    // @if map-has-key($breakpoints, $maxwidth) {
+    //     $maxw-val: map-get($breakpoints, $maxwidth);
+    //     $maxw: map-get($maxw-val, rem);
+    // }
 
-    // otherwise calculate rem value for custom argument
-    @else {
-        $maxw: convertPX($maxwidth, rem);
-    }
+    // // otherwise calculate rem value for custom argument
+    // @else {
+    //     $maxw: convertPX($maxwidth, rem);
+    // }
+
+    $minw: math.div($minwidth, 10);
+    $maxw: math.div($maxwidth, 10);
 
     // calculatae slope
     $slope: ($maxsize - $minsize) / ($maxw - $minw);
