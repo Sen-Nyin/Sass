@@ -1,7 +1,7 @@
 // /////////////////////////////////// 
 // Responsive.scss
 // Media Query & Clamp Mixins & Functions
-// version 1.0
+// version 1.1  01/07/2022
 // @LeonLonsdale
 // /////////////////////////////////// 
 
@@ -134,42 +134,50 @@ $breakpoints: ("xs": ("min": convertPX($xs, em),
 // RESPONSIVE CLAMPS
 // //////////////////////////////
 
-@mixin getclamp($property, $minsize, $maxsize, $minwidth, $maxwidth) {
+@mixin getclamp($property, $minsize, $maxsize, $minwidth: xs, $maxwidth: xxl) {
+    @if map-has-key($breakpoints, $minwidth) {
+        @if map-has-key($breakpoints, $maxwidth) {
+            $minwidth-values: map-get($breakpoints, $minwidth);
+            $maxwidth-values: map-get($breakpoints, $maxwidth);
+            $minw: map-get($minwidth-values, rem);
+            $maxw: map-get($maxwidth-values, rem);
+            // calculatae slope
+            $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
+            // calculate Y intersect
+            $yint: (0 - $minw) * $slope+$minsize;
 
-    // // If minwidth argument is within map, get rem value
-    // @if map-has-key($breakpoints, $minwidth) {
-    //     $minw-val: map-get($breakpoints, $minwidth);
-    //     $minw: map-get($minw-val, rem);
-    // }
+            #{$property}: clamp($minsize * 1rem,
+                    ($yint * 1rem) + ($slope * 100vw),
+                    $maxsize * 1rem);
+        }
 
-    // // otherwise calculate rem value for custom argument
-    // @else {
-    //     $minw: convertPX($minwidth, rem);
-    // }
+        @else {
+            $minwidth-values: map-get($breakpoints, $minwidth);
+            $minw: map-get($minwidth-values, rem);
+            $maxw: convertPX($maxwidth, rem);
+            // calculatae slope
+            $slope: ($maxsize - $minsize) / ($maxw - $minw);
+            // calculate Y intersect
+            $yint: (0 - $minw) * $slope+$minsize;
 
-    // // If maxwidth argument is within map, get rem value
-    // @if map-has-key($breakpoints, $maxwidth) {
-    //     $maxw-val: map-get($breakpoints, $maxwidth);
-    //     $maxw: map-get($maxw-val, rem);
-    // }
+            #{$property}: clamp($minsize * 1rem,
+                    ($yint * 1rem) + ($slope * 100vw),
+                    $maxsize * 1rem);
+        }
+    }
 
-    // // otherwise calculate rem value for custom argument
-    // @else {
-    //     $maxw: convertPX($maxwidth, rem);
-    // }
+    @else {
+        $minw: convertPX($minwidth, rem);
+        $maxw: convertPX($maxwidth, rem);
+        // calculatae slope
+        $slope: ($maxsize - $minsize) / ($maxw - $minw);
+        // calculate Y intersect
+        $yint: (0 - $minw) * $slope+$minsize;
 
-    // $minw: math.div($minwidth, 10);
-    // $maxw: math.div($maxwidth, 10);
-
-    // calculatae slope
-    $slope: ($maxsize - $minsize) / ($maxw - $minw);
-    // calculate Y intersect
-    $yint: (0 - $minw) * $slope+$minsize;
-
-    // output clamp values
-    #{$property}: clamp($minsize * 1rem,
-            ($yint * 1rem) + ($slope * 100vw),
-            $maxsize * 1rem);
+        #{$property}: clamp($minsize * 1rem,
+                ($yint * 1rem) + ($slope * 100vw),
+                $maxsize * 1rem);
+    }
 }
 
 @function clamped($minsize, $maxsize, $minwidth, $maxwidth) {
