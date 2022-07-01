@@ -1,7 +1,7 @@
 // /////////////////////////////////// 
 // Responsive.scss
 // Media Query & Clamp Mixins & Functions
-// version 1.1  01/07/2022
+// version 1.2  02/07/2022
 // @LeonLonsdale
 // /////////////////////////////////// 
 
@@ -135,6 +135,7 @@ $breakpoints: ("xs": ("min": convertPX($xs, em),
 // //////////////////////////////
 
 @mixin getclamp($property, $minsize, $maxsize, $minwidth: xs, $maxwidth: xxl) {
+
     @if map-has-key($breakpoints, $minwidth) {
         @if map-has-key($breakpoints, $maxwidth) {
             $minwidth-values: map-get($breakpoints, $minwidth);
@@ -156,7 +157,7 @@ $breakpoints: ("xs": ("min": convertPX($xs, em),
             $minw: map-get($minwidth-values, rem);
             $maxw: convertPX($maxwidth, rem);
             // calculatae slope
-            $slope: ($maxsize - $minsize) / ($maxw - $minw);
+            $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
             // calculate Y intersect
             $yint: (0 - $minw) * $slope+$minsize;
 
@@ -170,7 +171,7 @@ $breakpoints: ("xs": ("min": convertPX($xs, em),
         $minw: convertPX($minwidth, rem);
         $maxw: convertPX($maxwidth, rem);
         // calculatae slope
-        $slope: ($maxsize - $minsize) / ($maxw - $minw);
+        $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
         // calculate Y intersect
         $yint: (0 - $minw) * $slope+$minsize;
 
@@ -180,39 +181,57 @@ $breakpoints: ("xs": ("min": convertPX($xs, em),
     }
 }
 
-@function clamped($minsize, $maxsize, $minwidth, $maxwidth) {
+@function insertClamp($minsize, $maxsize, $minwidth, $maxwidth) {
+    @if map-has-key($breakpoints, $minwidth) {
+        @if map-has-key($breakpoints, $maxwidth) {
+            $minwidth-values: map-get($breakpoints, $minwidth);
+            $maxwidth-values: map-get($breakpoints, $maxwidth);
+            $minw: map-get($minwidth-values, rem);
+            $maxw: map-get($maxwidth-values, rem);
+            // calculatae slope
+            $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
+            // calculate Y intersect
+            $yint: (0 - $minw) * $slope+$minsize;
 
-    // If minwidth argument is within map, get rem value
-    // @if map-has-key($breakpoints, $minwidth) {
-    //     $minw-val: map-get($breakpoints, $minwidth);
-    //     $minw: map-get($minw-val, rem);
-    // }
+            $clampmin: $minsize * 1rem;
+            $clampgrow1: $yint * 1rem;
+            $clampgrow2: $slope * 100vw;
+            $clampmax: $maxsize * 1rem;
 
-    // // otherwise calculate rem value for custom argument
-    // @else {
-    //     $minw: convertPX($minwidth, rem);
-    // }
+            @return clamp(#{$clampmin}, #{$clampgrow1} + #{$clampgrow2}, #{$clampmax});
+        }
 
-    // // If maxwidth argument is within map, get rem value
-    // @if map-has-key($breakpoints, $maxwidth) {
-    //     $maxw-val: map-get($breakpoints, $maxwidth);
-    //     $maxw: map-get($maxw-val, rem);
-    // }
+        @else {
+            $minwidth-values: map-get($breakpoints, $minwidth);
+            $minw: map-get($minwidth-values, rem);
+            $maxw: convertPX($maxwidth, rem);
+            // calculatae slope
+            $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
+            // calculate Y intersect
+            $yint: (0 - $minw) * $slope+$minsize;
 
-    // // otherwise calculate rem value for custom argument
-    // @else {
-    //     $maxw: convertPX($maxwidth, rem);
-    // }
+            $clampmin: $minsize * 1rem;
+            $clampgrow1: $yint * 1rem;
+            $clampgrow2: $slope * 100vw;
+            $clampmax: $maxsize * 1rem;
 
-    $minw: math.div($minwidth, 10);
-    $maxw: math.div($maxwidth, 10);
+            @return clamp(#{$clampmin}, #{$clampgrow1} + #{$clampgrow2}, #{$clampmax});
+        }
+    }
 
-    // calculatae slope
-    $slope: ($maxsize - $minsize) / ($maxw - $minw);
-    // calculate Y intersect
-    $yint: (0 - $minw) * $slope+$minsize;
+    @else {
+        $minw: convertPX($minwidth, rem);
+        $maxw: convertPX($maxwidth, rem);
+        // calculatae slope
+        $slope: math.div(($maxsize - $minsize), ($maxw - $minw));
+        // calculate Y intersect
+        $yint: (0 - $minw) * $slope+$minsize;
 
-    @return clamp(#{$minsize} * 1rem,
-        (#{$yint} * 1rem) + (#{$slope} * 100vw),
-        #{$maxsize} * 1rem);
+        $clampmin: $minsize * 1rem;
+        $clampgrow1: $yint * 1rem;
+        $clampgrow2: $slope * 100vw;
+        $clampmax: $maxsize * 1rem;
+
+        @return clamp(#{$clampmin}, #{$clampgrow1} + #{$clampgrow2}, #{$clampmax});
+    }
 }
