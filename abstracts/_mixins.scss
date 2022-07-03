@@ -43,6 +43,12 @@
     place-items: center;
 }
 
+@mixin bodyCenter() {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}
+
 // //////////////////////////////
 // CENTRE ABSOLUTES
 // //////////////////////////////
