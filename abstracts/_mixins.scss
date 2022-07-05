@@ -72,13 +72,11 @@
 // //////////////////////////////
 
 @mixin px($rem-units) {
-    padding-left: #{$rem-units}rem;
-    padding-right: #{$rem-units}rem;
+    padding-inline: #{$rem-units}rem;
 }
 
 @mixin py($rem-units) {
-    padding-top: #{$rem-units}rem;
-    padding-bottom: #{$rem-units}rem;
+    padding-block: #{$rem-units}rem;
 }
 
 // //////////////////////////////
